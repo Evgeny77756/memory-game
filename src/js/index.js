@@ -23,7 +23,7 @@ const EMOJIS = [
  * 
  * @returns {string[]} - перемешанный массив сданными 
  */
-function shuffleAndSortCards(items) {
+function shuffleAndPickRandom(items) {
   // сортировка исходного массива в случайном порядке
   const sortedArr = items.sort(() => Math.random(items) - 0.5);
 
@@ -38,7 +38,7 @@ function shuffleAndSortCards(items) {
 
   return sortedDoubleArr
 
-
+}
 /**
  * Состояние игры
  * @property {boolean} isGameStarted - Игра началась или нет.
