@@ -18,6 +18,28 @@ const EMOJIS = [
 ];
 
 /**
+ * 
+ * @param {strings[]} items - Абстрактные данные для перемешивания
+ * 
+ * @returns {string[]} - перемешанный массив сданными 
+ */
+function shuffleAndSortCards(items) {
+  // сортировка исходного массива в случайном порядке
+  const sortedArr = items.sort(() => Math.random(items) - 0.5);
+
+  // достаём из 10 элементов первые 8
+  const dublicateArr = [...sortedArr].slice(0, 8);
+
+  // дублируем первые 8 элементов
+  const doubleArr = [...dublicateArr, ...dublicateArr];
+
+  // сортировка массива из 16ти элементов в случайном порядке
+  const sortedDoubleArr = double.sort(() => Math.random(doubleArr) - 0.5);
+
+  return sortedDoubleArr
+
+
+/**
  * Состояние игры
  * @property {boolean} isGameStarted - Игра началась или нет.
  * @property {number} totalTime - Общее время в игре.
