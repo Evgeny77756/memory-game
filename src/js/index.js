@@ -18,27 +18,38 @@ const EMOJIS = [
 ];
 
 /**
- * 
- * @param {strings[]} items - Абстрактные данные для перемешивания
- * 
- * @returns {string[]} - перемешанный массив сданными 
+ *
+ * @param {string[]} items - Абстрактные данные для перемешивания
+ *
+ * @returns {string[]} - перемешанный массив сданными
  */
 function shuffleAndPickRandom(items) {
-  // сортировка исходного массива в случайном порядке
-  const sortedArr = items.sort(() => Math.random(items) - 0.5);
+  if (items && Array.isArray(items)) {
+    // сортировка исходного массива в случайном порядке
+    const sortedArr = items.sort(() => Math.random(items) - 0.5);
 
-  // достаём из 10 элементов первые 8
-  const dublicateArr = [...sortedArr].slice(0, 8);
+    // достаём из 10 элементов первые 8
+    const dublicateArr = [...sortedArr].slice(0, 8);
 
-  // дублируем первые 8 элементов
-  const doubleArr = [...dublicateArr, ...dublicateArr];
+    // дублируем первые 8 элементов
+    const doubleArr = [...dublicateArr, ...dublicateArr];
 
-  // сортировка массива из 16ти элементов в случайном порядке
-  const sortedDoubleArr = double.sort(() => Math.random(doubleArr) - 0.5);
+    // сортировка массива из 16ти элементов в случайном порядке
+    const sortedDoubleArr = doubleArr.sort(() => Math.random(doubleArr) - 0.5);
 
-  return sortedDoubleArr
-
+    return sortedDoubleArr;
+  } else {
+    console.error("Передайте эмодзи в виде массива!");
+  }
 }
+
+/**
+ * Переворачивает карту и обрабатывает
+ */
+const flipCard = (card) => {
+  console.log("родитель карточки получен", card)
+};
+
 /**
  * Состояние игры
  * @property {boolean} isGameStarted - Игра началась или нет.
@@ -80,6 +91,9 @@ const generateGame = () => {
     throw new Error("Размер игрового поля должен быть четным!");
   }
 
+  // Вызываем функцию перемешивания и получение случайной карточки для эмоджи
+  const shuffleAndPickEmoji = shuffleAndPickRandom(EMOJIS);
+
   // Итерация по карточкам
   const cardsHTML = EMOJIS.map((emoji) => {
     return `
@@ -96,15 +110,41 @@ const generateGame = () => {
 
 generateGame();
 
-// Обработчик события клика по карточке
-const CARDS = SELECTORS.board.children;
+/**
+ * Функция обработки событий (клик по карточке)
+ */
+const attachEventListeners = () => {
+  // Получение HTMLcollection front карточек (Need to fix)
+  // const CardsFront = SELECTORS.board.children;
 
-if (CARDS) {
-  // HTMLCollection в массив
-  [...CARDS].forEach((card) => {
-    // добавление клика на отдельно взятую карточку
-    card.addEventListener("click", (event) => {
-      console.log(event.target);
+  // Получение  HTMLcollection родителя карточек (card)
+  const cardsCollection = SELECTORS.board.children;
+
+  if (cardsCollection) {
+    // HTMLCollection в массив
+    [...cardsCollection].forEach((card) => {
+      // добавление клика на отдельно взятую карточку
+      card.addEventListener("click", (event) => {
+        // Подучаем цель события (элемент, по которому произошёл клик) и его родительский элемент
+        const eventTarget = event.target;
+        const eventParent = eventTarget.parentElement;
+
+        // Если родитель содержит класс "card" и он ещё не перевёрнут, вызываем функцию flipCard()
+        if (
+          eventTarget.className.includes(
+            "card" && !eventParent.className.includes("flipped")
+          )
+        ) {
+          flipCard(eventParent);
+        }
+
+      });
     });
-  });
-}
+  }
+};
+
+/** Вызов необходимых функций при загрузке страницы */
+document.addEventListener("DOMContentLoaded", () => {
+  generateGame(); // Генерируем игру
+  attachEventListeners(); // Прикрепляем обработчики событий
+});
